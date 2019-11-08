@@ -14,12 +14,21 @@ Javassist，ASM的使用
     
 - asm
 
-  1.  AS使用 `Asm Bytecode Outline` 插件查看字节码
+  1.  AS使用 `Asm Bytecode Outline`/`jclasslib Bytecode viewer Ingo
+      Kegel`插件查看字节码
+      - Asm Bytecode Outline 使用是点击java文件，右键`show byteCode
+        onlin`,右方出现弹框显示
+      - jclasslib Bytecode viewer IngoKegel 使用菜单栏`View`中选择`Show
+        Bytecode With jclasslib`
   2.  ClassVisitor 解析类，再使用其对应的xxxVisitor解析其他
   3.  在对应的xxxVisitor中插入字节码
 
 - 总结：
-    1.  ASM 比 jaassist 占据内存更小，更快
+    1.  ASM 比 javassist 占据内存更小，更快
     2.  ASM提供更多精细化的字节码操作
     3.  javassist会生成很多临时变量
+
+- 操作文档 ：
+  [字节码总结笔记](https://github.com/yanchunlan/SourceCodeSummary/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9E%81%E8%87%B4%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/%E5%AD%97%E8%8A%82%E7%A0%81%E6%93%8D%E4%BD%9C.txt)
+ 
     
