@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'clicklistener'
+apply plugin: 'method-time-trace'
 
 android {
     compileSdkVersion 29

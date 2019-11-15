@@ -1,12 +1,22 @@
-apply plugin: 'java-library'
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+repositories {
+    google()
+    jcenter()
+    mavenCentral()
+}
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile gradleApi()
-    compile localGroovy()
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation gradleApi()
+    implementation localGroovy()
 
-    compile 'com.android.tools.build:gradle:3.4.0'
-    compile 'com.android.tools.build:gradle-api:3.4.0'
+    implementation 'com.android.tools.build:gradle:3.4.0'
+    implementation 'com.android.tools.build:gradle-api:3.4.0'
 
     //ASM相关
     implementation 'org.ow2.asm:asm:5.1'
@@ -14,5 +24,30 @@ dependencies {
     implementation 'org.ow2.asm:asm-commons:5.1'
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
+sourceSets {
+    main {
+        groovy {
+            srcDir '../asmlib/src/main/groovy'
+        }
+        java {
+            srcDir '../asmlib/src/main/java'
+        }
+        resources {
+            srcDir '../asmlib/src/main/resources'
+        }
+    }
+}
+
+compileGroovy {
+    dependsOn tasks.getByPath('compileKotlin')
+    classpath += files(compileKotlin.destinationDir)
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('repo'))
+        pom.groupId = 'com.example.methodtime'
+        pom.artifactId = 'tracemanplugin'
+        pom.version = "1.0.0"
+    }
+}

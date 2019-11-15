@@ -59,7 +59,7 @@ class ClickListenerTransform extends Transform {
         outputProvider = invocation.outputProvider
 
         appExtension.bootClasspath.each {
-            System.out.println("bootClasspath it.absolutePath " + it.absolutePath)
+            System.out.println("click -> bootClasspath it.absolutePath " + it.absolutePath)
             pool.appendClassPath(it.absolutePath)
         }
 
@@ -72,13 +72,13 @@ class ClickListenerTransform extends Transform {
     private void traversalDirInputs(TransformInput input) {
         input.directoryInputs.each {
             String fileName = it.file.absolutePath
-            System.out.println("traversalDirInputs copy fileName " + fileName)
+            System.out.println("click -> traversalDirInputs copy fileName " + fileName)
             pool.insertClassPath(fileName)
             findTarget(it.file, fileName)
 
             def dest = outputProvider.getContentLocation(it.name
                     , it.contentTypes, it.scopes, Format.DIRECTORY)
-            System.out.println("traversalDirInputs dest fileName " + dest)
+            System.out.println("click -> traversalDirInputs dest fileName " + dest)
             FileUtils.copyDirectory(it.file, dest)
         }
     }
@@ -95,7 +95,7 @@ class ClickListenerTransform extends Transform {
 
     private void modify(File dir, String fileName) {
         String filePath = dir.absolutePath
-        System.out.println("modify filePath " + filePath)
+        System.out.println("click -> modify filePath " + filePath)
         return
         if (isClassFile(filePath)) {
             String className = filePath.replace(fileName, "")
@@ -108,18 +108,18 @@ class ClickListenerTransform extends Transform {
               }*/
 
             CtClass ctClass = pool.get(name)
-            System.out.println("modify ctClass.name " + ctClass.name)
+            System.out.println("click -> modify ctClass.name " + ctClass.name)
             CtClass[] interfaces = ctClass.getInterfaces()
             if (interfaces.contains(pool.get(CLICK_LISTENER))) {
                 if (name.contains("\$")) {
-                    System.out.println("modify contains ctClass.name " + ctClass.name)
-                    System.out.println("modify ctClass " + ctClass)
+                    System.out.println("click -> modify contains ctClass.name " + ctClass.name)
+                    System.out.println("click -> modify ctClass " + ctClass)
                     CtClass outer = pool.get(name.substring(0, name.indexOf("\$")))
                     CtField ctField = ctClass.getField().find {
                         return it.type == outer
                     }
                     if (ctField != null) {
-                        System.out.println("modify ctField.Name " + ctField.name)
+                        System.out.println("click -> modify ctField.Name " + ctField.name)
 
                         def body = "android.widget.Toast.makeText(\$1.getContext(),\"toast\",android.widget.Toast.LENGTH_SHORT).show();"
                         addCode(ctClass, body, fileName)
@@ -142,8 +142,8 @@ class ClickListenerTransform extends Transform {
         ctClass.writeFile(fileName)
         ctClass.detach()
 
-        System.out.println("addCode ctField.Name " + ctField.name)
-        System.out.println("addCode ctMethod.Name " + ctMethod.name)
+        System.out.println("click -> addCode ctField.Name " + ctField.name)
+        System.out.println("click -> addCode ctMethod.Name " + ctMethod.name)
 
     }
 
@@ -163,14 +163,14 @@ class ClickListenerTransform extends Transform {
                 //jar文件一般是第三方依赖库jar文件
                 // 重命名输出文件（同目录copyFile会冲突）
                 def jarName = jarInput.name
-//                System.out.println("traversalJarInputs copy jarName " + jarName)
+//                System.out.println("click -> traversalJarInputs copy jarName " + jarName)
                 def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
                 if (jarName.endsWith(".jar")) {
                     jarName = jarName.substring(0, jarName.length() - 4)
                 }
                 def dest = outputProvider.getContentLocation(jarName + md5Name,
                         jarInput.contentTypes, jarInput.scopes, Format.JAR)
-//                System.out.println("traversalJarInputs dest fileName " + dest)
+//                System.out.println("click -> traversalJarInputs dest fileName " + dest)
                 FileUtils.copyFile(jarInput.file, dest)
         }
     }

@@ -7,11 +7,11 @@ repositories {
 }
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
+    implementation gradleApi()
+    implementation localGroovy()
 
-    compile 'com.android.tools.build:gradle:3.4.0'
-    compile 'org.javassist:javassist:3.20.0-GA' //操作字节码，比ASM性能低
+    implementation 'com.android.tools.build:gradle:3.4.0'
+    implementation 'org.javassist:javassist:3.20.0-GA' //操作字节码，比ASM性能低
 }
 
 // ------------ 上传需要 start ---------

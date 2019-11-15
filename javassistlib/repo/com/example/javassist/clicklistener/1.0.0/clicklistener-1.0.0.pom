@@ -10,13 +10,13 @@
       <groupId>com.android.tools.build</groupId>
       <artifactId>gradle</artifactId>
       <version>3.4.0</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.20.0-GA</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>
