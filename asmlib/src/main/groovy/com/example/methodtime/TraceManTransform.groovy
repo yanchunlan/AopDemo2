@@ -77,7 +77,7 @@ class TraceManTransform extends Transform {
                     traceSrcFiles(directoryInput, outputProvider, traceConfig)
                 }
                 input.jarInputs.each { JarInput jarInput ->
-//                    traceJarFiles(jarInput, outputProvider, traceConfig)
+                    traceJarFiles(jarInput, outputProvider, traceConfig)
                 }
             }
         }

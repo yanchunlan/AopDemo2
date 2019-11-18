@@ -30,5 +30,23 @@ Javassist，ASM的使用
 
 - 操作文档 ：
   [字节码总结笔记](https://github.com/yanchunlan/SourceCodeSummary/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9E%81%E8%87%B4%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/%E5%AD%97%E8%8A%82%E7%A0%81%E6%93%8D%E4%BD%9C.txt)
+  
+##### demo 中的案列解释 ：
+- app： 
+  -    build.gradle中校验了2个插件 'clicklistener'，'method-time-trace'
+
+- asmlib： 
+
+  -    sample01: asm生成文件的demo，在方法开始，结束插入log
+  -    methodtime: 每个方法中开始，结束，打印指定的插桩方法
+    
+- javassistlib： 
+
+  -   javassist: 拦截点击事件打印toast
+  -   agent: 运行时，javassist插桩
+  -   sample01: javassist生成文件的demo，在方法开始，结束插入log
+    
+    
+    
  
     
