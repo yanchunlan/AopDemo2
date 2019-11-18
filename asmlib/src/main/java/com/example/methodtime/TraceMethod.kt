@@ -1,6 +1,6 @@
 package com.example.methodtime
 
-import jdk.internal.org.objectweb.asm.Opcodes
+import org.objectweb.asm.Opcodes
 
 /**
  * author:  ycl

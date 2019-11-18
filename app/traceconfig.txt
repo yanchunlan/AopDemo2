@@ -8,4 +8,4 @@
 #-keepclass com/example/aopdemo2/MainActivity
 
 #插桩代码所在类,这里固定配置为：cn/cxzheng/tracemanui/TraceMan(Fixed configuration here: cn/cxzheng/tracemanui/TraceMan)
-#-beatclass com/example/aopdemo2/trace_man
+-beatclass com/example/aopdemo2/trace_man/TraceMan

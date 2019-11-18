@@ -1,9 +1,18 @@
 package com.example.methodtime
 
-import com.android.build.api.transform.*
+import com.android.build.api.transform.DirectoryInput
+import com.android.build.api.transform.Format
+import com.android.build.api.transform.JarInput
+import com.android.build.api.transform.QualifiedContent
+import com.android.build.api.transform.Transform
+import com.android.build.api.transform.TransformException
+import com.android.build.api.transform.TransformInput
+import com.android.build.api.transform.TransformInvocation
+import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.internal.pipeline.TransformManager
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
@@ -85,9 +94,9 @@ class TraceManTransform extends Transform {
         if (directoryInput.file.isDirectory()) {
             directoryInput.file.eachFileRecurse { File file ->
                 def name = file.name
-                System.out.println("traceTime -> traceSrcFiles name: ${name}")
+//                System.out.println("traceTime -> traceSrcFiles name: ${name}")
 
-                if (traceConfig.isConfigTraceClass(name)) {
+                if (traceConfig.isNeedTraceClass(name)) {
                     System.out.println("traceTime -> traceSrcFiles startAsm")
 
                     // asm 操作

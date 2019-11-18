@@ -1,7 +1,7 @@
 package com.example.methodtime
 
-import jdk.internal.org.objectweb.asm.MethodVisitor
-import jdk.internal.org.objectweb.asm.commons.AdviceAdapter
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.commons.AdviceAdapter
 
 /**
  * author:  ycl
@@ -24,16 +24,19 @@ class TraceMethodVisitor(
     private val maxSectionNameLength = 127
 
     init {
+
         val traceMethod = TraceMethod.create(0, access, className, name, desc)
         this.methodName = traceMethod.getMethodNameText()
         this.className = className
         this.name = name
+        System.out.println("traceTime -> TraceMethodVisitor init ")
     }
 
 
     override fun onMethodEnter() {
         super.onMethodEnter()
         val methodName = generatorMethodName()
+        System.out.println("traceTime -> TraceMethodVisitor onMethodEnter methodName: $methodName")
 
         mv.visitLdcInsn(methodName)
         mv.visitMethodInsn(
@@ -52,6 +55,7 @@ class TraceMethodVisitor(
     override fun onMethodExit(p0: Int) {
         super.onMethodExit(p0)
         val methodName = generatorMethodName()
+        System.out.println("traceTime -> TraceMethodVisitor onMethodExit methodName: $methodName")
 
         mv.visitLdcInsn(methodName)
         mv.visitMethodInsn(

@@ -1,15 +1,15 @@
 package com.example.methodtime
 
-import jdk.internal.org.objectweb.asm.ClassVisitor
-import jdk.internal.org.objectweb.asm.MethodVisitor
-import jdk.internal.org.objectweb.asm.Opcodes
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
 
 /**
  * author:  ycl
  * date:  2019/11/17 16:58
  * desc:
  */
-class TraceClassVisitor(api: Int, cv: ClassVisitor?, val traceConfig: Config) : ClassVisitor(api, cv) {
+class TraceClassVisitor(api: Int, cv: ClassVisitor?, var traceConfig: Config) : ClassVisitor(api, cv) {
 
     private var className: String? = null
     private var isABSClass = false
@@ -23,7 +23,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor?, val traceConfig: Config) : 
                         superName: String?,
                         interfaces: Array<out String>?) {
         super.visit(version, access, name, signature, superName, interfaces)
-        System.out.println("traceTime -> TraceClassVisitor visit name $name")
+        System.out.println("traceTime -> TraceClassVisitor visit name: $name")
         this.className = name
         //抽象方法或者接口
         if (access and Opcodes.ACC_ABSTRACT > 0 || access and Opcodes.ACC_INTERFACE > 0) {
@@ -53,7 +53,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor?, val traceConfig: Config) : 
             desc: String?,
             signature: String?,
             exceptions: Array<out String>?): MethodVisitor {
-        System.out.println("traceTime -> TraceClassVisitor visitMethod name $name")
+        System.out.println("traceTime -> TraceClassVisitor visitMethod name: $name")
         val isConstructor = MethodFilter.isConstructor(name)
         return if (isABSClass || isBeatClass || !isConfigTraceClass || isConstructor) {
             super.visitMethod(access, name, desc, signature, exceptions)
