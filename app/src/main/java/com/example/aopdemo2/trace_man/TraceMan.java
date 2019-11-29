@@ -15,7 +15,7 @@ public class TraceMan {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             Trace.beginSection(name);
         }
-        Log.d(TAG, "start ->  methodName: "+name+" currentTimeMillis: "+System.currentTimeMillis()+" isInMainThread: "+isInMainThread());
+        Log.d(TAG, "start ->  methodName: "+name+" Time: "+System.currentTimeMillis()+" isMainThread: "+isInMainThread());
     }
 
     public static void end(String name) {

@@ -128,6 +128,7 @@ class TraceManTransform extends Transform {
         if (jarInput.file.getAbsolutePath().endsWith(".jar")) {
 
             def jarName = jarInput.name
+            System.out.println("traceTime -> traceJarFiles file.getAbsolutePath: ${jarInput.file.getAbsolutePath()}")
             System.out.println("traceTime -> traceJarFiles jarName: ${jarInput.name}")
 
             def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
