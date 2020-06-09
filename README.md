@@ -1,4 +1,4 @@
-# AutoTryCatchDemo
+# AopDemo2
 Javassist，ASM的使用
 
 - javassist
@@ -30,6 +30,7 @@ Javassist，ASM的使用
 
 - 操作文档 ：
   [字节码总结笔记](https://github.com/yanchunlan/SourceCodeSummary/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9E%81%E8%87%B4%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/%E5%AD%97%E8%8A%82%E7%A0%81%E6%93%8D%E4%BD%9C.txt)
+  [ASM文档](https://asm.ow2.io/asm4-guide.pdf)
   
 #### demo 中的案列解释 ：
 - app： 
