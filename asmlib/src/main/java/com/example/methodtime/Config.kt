@@ -95,11 +95,12 @@ class Config {
     /**
      * 解析插桩配置文件
      */
-    fun parseTraceConfigFile() {
+    fun parseTraceConfigFile():Boolean {
 
         val traceConfigFile = File(mTraceConfigFile)
         if (!traceConfigFile.exists()) {
             System.out.println("trace config file not exist")
+            return false
         }
 
         val configStr = Utils.readFileAsString(traceConfigFile.absolutePath)
@@ -147,6 +148,7 @@ class Config {
             }
 
         }
+        return true
     }
 
 

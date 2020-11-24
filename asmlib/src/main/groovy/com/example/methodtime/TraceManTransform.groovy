@@ -23,13 +23,21 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
+import com.google.common.collect.Sets
 
 class TraceManTransform extends Transform {
+    interface ScopesType {
+        int TYPE_APP = 1
+        int TYPE_LIB = 2
+    }
+    public static final Set<QualifiedContent.Scope> SCOPE_FULL_LIB = Sets.immutableEnumSet(QualifiedContent.Scope.PROJECT)
 
     private Project project
+    private int scopesType
 
-    public TraceManTransform(Project project) {
+    public TraceManTransform(Project project, int scopesType) {
         this.project = project
+        this.scopesType = scopesType
     }
 
     @Override
@@ -44,6 +52,9 @@ class TraceManTransform extends Transform {
 
     @Override
     Set<? super QualifiedContent.Scope> getScopes() {
+        if (scopesType == ScopesType.TYPE_LIB) {
+            return SCOPE_FULL_LIB
+        }
         return TransformManager.SCOPE_FULL_PROJECT
     }
 
@@ -56,29 +67,61 @@ class TraceManTransform extends Transform {
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation)
 
-        System.out.println("traceTime -> transform")
+        System.out.println("traceTime -> transform start")
+        long startTime = System.currentTimeMillis()
+
         def traceManConfig = project.traceMan
         String output = traceManConfig.output
         if (output == null || output.isEmpty()) {
             traceManConfig.output = project.getBuildDir().getAbsolutePath() + File.separator + "traceman_output"
         }
-        if (traceManConfig.open) {
-            Config traceConfig = initConfig(traceManConfig) // 初始化配置文件
-            traceConfig.parseTraceConfigFile() // 解析配置文件
 
-            TransformOutputProvider outputProvider = transformInvocation.outputProvider
-            if (outputProvider != null) {
-                outputProvider.deleteAll()
+        if (!traceManConfig.open) {
+            defaultEach(transformInvocation)
+            return
+        }
+
+        Config traceConfig = initConfig(traceManConfig) // 初始化配置文件
+         // 解析配置文件
+        if (!traceConfig.parseTraceConfigFile()) {
+            defaultEach(transformInvocation)
+            return
+        }
+
+        TransformOutputProvider outputProvider = transformInvocation.outputProvider
+        if (outputProvider != null) {
+            outputProvider.deleteAll()
+        }
+
+        Collection<TransformInput> inputs = transformInvocation.inputs
+        inputs.each { TransformInput input ->
+            input.directoryInputs.each { DirectoryInput directoryInput ->
+                traceSrcFiles(directoryInput, outputProvider, traceConfig)
             }
+            input.jarInputs.each { JarInput jarInput ->
+                traceJarFiles(jarInput, outputProvider, traceConfig)
+            }
+        }
 
-            Collection<TransformInput> inputs = transformInvocation.inputs
-            inputs.each { TransformInput input ->
-                input.directoryInputs.each { DirectoryInput directoryInput ->
-                    traceSrcFiles(directoryInput, outputProvider, traceConfig)
-                }
-                input.jarInputs.each { JarInput jarInput ->
-                    traceJarFiles(jarInput, outputProvider, traceConfig)
-                }
+        long endTime = System.currentTimeMillis()
+        System.out.println("traceTime -> transform end cost: ${endTime-startTime}")
+    }
+
+    // 默认什么都不执行
+    private void defaultEach(TransformInvocation transformInvocation) {
+
+        TransformOutputProvider outputProvider = transformInvocation.outputProvider
+        if (outputProvider != null) {
+            outputProvider.deleteAll()
+        }
+
+        Collection<TransformInput> inputs = transformInvocation.inputs
+        inputs.each { TransformInput input ->
+            input.directoryInputs.each { DirectoryInput directoryInput ->
+                defaultSrcFiles(directoryInput, outputProvider)
+            }
+            input.jarInputs.each { JarInput jarInput ->
+                defaultJarFiles(jarInput, outputProvider)
             }
         }
     }
@@ -180,6 +223,23 @@ class TraceManTransform extends Transform {
 
             tmpFile.delete()
         }
-
     }
+
+    void defaultSrcFiles(DirectoryInput directoryInput, TransformOutputProvider outputProvider) {
+        def dest = outputProvider.getContentLocation(directoryInput.name,
+                directoryInput.contentTypes, directoryInput.scopes,
+                Format.DIRECTORY)
+        FileUtils.copyDirectory(directoryInput.file, dest)
+    }
+
+    void defaultJarFiles(JarInput jarInput, TransformOutputProvider outputProvider) {
+        def jarName = jarInput.name
+        def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
+        if (jarName.endsWith(".jar")) {
+            jarName = jarName.substring(0, jarName.length() - 4)
+        }
+        def dest = outputProvider.getContentLocation(jarName + "_" + md5Name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+        FileUtils.copyFile(jarInput.file, dest)
+    }
+
 }

@@ -47,8 +47,39 @@ Javassist，ASM的使用
   -   javassist: 拦截点击事件打印toast
   -   agent: 运行时，javassist插桩
   -   sample01: javassist生成文件的demo，在方法开始，结束插入log
-    
-    
+  
+#### 拓展 ：
+- methodtime： 
+    1.  支持栈深度定制，解决插桩方法栈深度太深导致的性能损耗问题，并支持清栈方法
+        ```
+        1>  插桩方法访问时，通过AtomicLong.getAndIncrement自增函数，给每个方法内的插桩start/end都赋值同一个id
+        2>  插桩的代码调用时，通过ThreadLocal<Stack<Pair<Long, Integer>>>操作方法栈，入栈小于栈深就存储并执行
+        Trace.beginSection，出站等于方法栈id就弹出并执行Trace.endSection
+        3>  提供一个工具类，通过它get/set设置属性(栈深、是否清栈)，并在每次入栈存储方法栈之前调用判断
+        ```
+    2.  增量更新
+    3.  开线程池支持并行多线程执行
+    4.  编译信息反馈数据(json/html/println/Logger)
+        实质就是IO存储操作，插桩信息存储在本地Bean中，通过相对应的io操作存储到本地
+        ```
+        // json
+        file.withOutputStream {
+            it.write(new Gson().toJson(xxx).getBytes("utf-8"))
+        }
+        // html
+        Writer writer = new BufferedWriter(new FileWriter(new File(xxx)));
+        writer.append("<html>")
+              .append("<head>").append("<meta charset=\"utf-8\">")
+              ...
+              .append("</body>")
+              .append("</html>")
+        writer.flush();
+        writer.close();
+        // systemOutput
+        System.out.println(xxx)
+        // systemLogger
+        Logging.getLogger("xxx").log(xxx)
+        ```
     
  
     
