@@ -35,6 +35,7 @@ Javassist，ASM的使用
     -> visitInnerClass/Field/Method 
     visitEnd
   ```
+![](./pic/asm主要调用方法.jpg)
 
 - 总结：
     1.  ASM 比 javassist 占据内存更小，更快
