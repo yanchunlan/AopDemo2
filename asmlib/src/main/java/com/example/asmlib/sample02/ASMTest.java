@@ -28,7 +28,7 @@ public class ASMTest {
         cr.accept(cv, ClassReader.SKIP_DEBUG);
         byte[] data = cw.toByteArray();
 
-        FileOutputStream fos = new FileOutputStream(file.getParentFile()/*.getParentFile()*/.getAbsolutePath() + File.separator + "Base.class");
+        FileOutputStream fos = new FileOutputStream(file.getParentFile().getAbsolutePath() + File.separator + "Base.class");
         fos.write(data);
         fos.close();
         System.out.println(" success ");

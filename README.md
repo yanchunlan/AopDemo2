@@ -22,6 +22,19 @@ Javassist，ASM的使用
         Bytecode With jclasslib`
   2.  ClassVisitor 解析类，再使用其对应的xxxVisitor解析其他
   3.  在对应的xxxVisitor中插入字节码
+  
+  ```
+  核心api：
+    CoreApi基于访问者模式操作类
+    TreeApi基于树节点操作类（继承coreApi，实质是coreApi的拓展，缓存了visitX的值，可以获取method/feilds等直接修改，而不是visitX的方式修改）
+  流程：
+    visit 
+    -> visitSource 
+    -> visitOuterClass 
+    -> visitAnnotation/Attribute 
+    -> visitInnerClass/Field/Method 
+    visitEnd
+  ```
 
 - 总结：
     1.  ASM 比 javassist 占据内存更小，更快
@@ -38,8 +51,11 @@ Javassist，ASM的使用
 
 - asmlib： 
 
-  -    sample01: asm生成文件的demo，在方法开始，结束插入log
-  -    sample02: asm生成文件的demo，在方法开始，结束插入log
+  -    sample01: 在方法开始，结束插入log
+  -    sample02: 在方法开始，结束插入log
+  -    sample03: 线程替换，并根据访问方法指令判断方法是否执行
+  -    sample04: 在方法开始，结束添加try catch
+  -    sample05: coreApi与treeApi两种方式实现线程池替换
   -    methodtime: 每个方法中开始，结束，打印指定的插桩方法
     
 - javassistlib： 

@@ -41,12 +41,4 @@ public class Base {
     public String getIMEI() {
         return new BThread().returnString();
     }
-
-    /**
-     * 3.   给方法添加tryCatch
-     */
-    public void tryCatch() {
-        System.out.println("tryCatch");
-    }
-
 }

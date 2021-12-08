@@ -15,10 +15,6 @@ import java.io.IOException;
  * author:  ycl
  * date:  2019/11/08 16:38
  * desc:
- *      其中只包含一个process()方法，方法内输出一行“process”。
- *      修改后，方法执行前输出“start”，之后输出"end"
- *      System.out.println("start");
- *      System.out.println("end");
  */
 public class ASMTest {
     public static void main(String[] args) throws IOException {
@@ -30,7 +26,7 @@ public class ASMTest {
         cr.accept(cv, ClassReader.SKIP_DEBUG);
         byte[] data = cw.toByteArray();
 
-        File f = new File("asmlib/build/classes/java/main/com/example/asmlib/Base.class");
+        File f = new File("asmlib/build/classes/java/main/com/example/asmlib/sample01/Base.class");
         FileOutputStream fout = new FileOutputStream(f);
         fout.write(data);
         fout.close();

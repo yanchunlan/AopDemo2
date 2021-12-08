@@ -1,4 +1,4 @@
-package com.example.asmlib.sample03;
+package com.example.asmlib.sample04;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
@@ -18,7 +19,7 @@ import org.objectweb.asm.commons.AdviceAdapter;
  */
 public class ASMTest {
     public static void main(String[] args) throws Exception {
-        File file = new File("asmlib/build/classes/java/main/com/example/asmlib/sample03/Base.class");
+        File file = new File("asmlib/build/classes/java/main/com/example/asmlib/sample04/Base.class");
         FileInputStream fileInputStream = new FileInputStream(file);
 
         ClassReader cr = new ClassReader(fileInputStream);
@@ -58,7 +59,6 @@ public class ASMTest {
 
         private final String methodName;
         private final String className;
-        private boolean find = false;
 
         protected MyMethodVisitor(int api, MethodVisitor mv, int access, String name, String desc, String className) {
             super(api, mv, access, name, desc);
@@ -67,44 +67,35 @@ public class ASMTest {
             System.out.println("MyMethodVisitor className: "+ className+" method: "+methodName+" name: "+  name);
         }
 
-        // 访问类的指令，一般有NEW, ANEWARRAY, CHECKCAST or INSTANCEOF
+        private final Label tryStart = new Label();
+        private final Label tryEnd = new Label();
+        private final Label catchStart = new Label();
+        private final Label catchEnd = new Label();
+
         @Override
-        public void visitTypeInsn(int opcode, String type) {
-            super.visitTypeInsn(opcode, type);
-            System.out.println("visitTypeInsn opcode " + opcode + " type " + type);
-            if (opcode == Opcodes.NEW && "java/lang/Thread".equals(type)) {
-                find = true;
-                mv.visitTypeInsn(Opcodes.NEW, "com/example/asmlib/sample03/MyThread");
-                System.out.println("visitTypeInsn find true");
+        protected void onMethodEnter() {
+            super.onMethodEnter();
+            if (isTryCatch()) {
+                mv.visitTryCatchBlock(tryStart, tryEnd, catchStart, "java/lang/Exception");
+                mv.visitLabel(tryStart);
             }
         }
 
-        // 访问方法指令
         @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            System.out.println("visitMethodInsn opcode " + opcode + " owner " + owner + " name " + name + " desc " + desc);
-
-            if ("java/lang/Thread".equals(owner)
-                && className.equals("com/example/asmlib/sample03/Base")
-                && methodName.equals("test")
-                && opcode == Opcodes.INVOKESPECIAL
-                && find
-            ) {
-                find = false;
-                mv.visitMethodInsn(opcode, "com/example/asmlib/sample03/MyThread", name, desc, itf);
-                System.out.println(
-                    "visitMethodInsn find false className: " + className + " method: " +
-                        methodName + " name: " + name);
-            } else {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
+        protected void onMethodExit(int opcode) {
+            super.onMethodExit(opcode);
+            if (isTryCatch()) {
+                mv.visitLabel(tryEnd);
+                mv.visitJumpInsn(GOTO, catchEnd);
+                mv.visitLabel(catchStart);
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/RuntimeException", "printStackTrace", "()V", false);
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitLabel(catchEnd);
             }
+        }
 
-//            2.  判断哪里调用了指定方法
-//            if (owner.equals("com/example/asmlib/sample03/Base$BThread") && name.equals("returnString") && desc.equals("()Ljava/lang/String;")) {
-//                System.out.println("visitMethodInsn returnString className: "+ className+" method: "+methodName+" name: "+  name);
-//            }
-
-
+        private boolean isTryCatch() {
+            return className.equals("com/example/asmlib/sample04/Base") && methodName.equals("tryCatch");
         }
     }
 
